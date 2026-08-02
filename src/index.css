@@ -1,6 +1,6 @@
 /* ── Reset & base ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-input, textarea, select { touch-action: manipulation; -webkit-user-select: text; user-select: text; }
+input, textarea, select { touch-action: manipulation; -webkit-user-select: text; user-select: text; pointer-events: all; cursor: text; }
 
 :root {
   --bg:          #0d0818;
@@ -22,43 +22,43 @@ input, textarea, select { touch-action: manipulation; -webkit-user-select: text;
   --nav-h:       64px;
 }
 
-html, body { height: 100%; margin: 0; }
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
-  overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
 }
 
-#root { height: 100%; }
-
 /* ── App shell ── */
 .app {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  max-width: 430px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
+  height: 100dvh;
+  max-width: 430px;
+  margin: 0 auto;
 }
 
 .page-wrap {
-  position: absolute;
-  top: env(safe-area-inset-top, 0px);
-  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
-  left: 0; right: 0;
+  flex: 1;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
 }
 .page-wrap::-webkit-scrollbar { display: none; }
 
 /* ── Bottom nav ── */
 .bottom-nav {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0; right: 0;
+  max-width: 430px;
+  margin: 0 auto;
   background: rgba(13, 8, 24, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
