@@ -530,7 +530,7 @@ input[type=range]:active::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(123,
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.6;
   padding: 12px;
   resize: none;
@@ -1118,7 +1118,7 @@ button { font-family: inherit; }
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text);
-  font-size: 14px;
+  font-size: 16px;
   padding: 8px 10px;
 }
 .pm-name-input::placeholder { color: var(--text-muted); }
@@ -1129,7 +1129,7 @@ button { font-family: inherit; }
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text);
-  font-size: 14px;
+  font-size: 16px;
   padding: 8px 10px;
 }
 .pm-qty-input::placeholder { color: var(--text-muted); }
