@@ -4,15 +4,14 @@ import './index.css'
 import App from './App.jsx'
 
 // iOS PWA keyboard fix: readOnly trick.
-// iOS only shows the keyboard when a *focused editable* input becomes
-// editable, not when focus() is called directly. So we:
-// 1. Set readOnly (focus without keyboard)
-// 2. Call focus() so the element has focus
-// 3. Remove readOnly after a frame — iOS then shows the keyboard
+// navigator.standalone can be unreliable, so run on all iOS.
+// iOS only triggers the keyboard when a focused input transitions
+// from readOnly → editable, not from a bare focus() call.
 const SKIP_TYPES = new Set(['range', 'checkbox', 'radio', 'date', 'time', 'datetime-local', 'month', 'week', 'color', 'file', 'submit', 'button', 'reset', 'image']);
-const isIOSPWA = window.navigator.standalone === true && /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-if (isIOSPWA) {
+if (isIOS) {
   document.addEventListener('touchstart', (e) => {
     const el = e.target;
     const isKeyboardInput = (el instanceof HTMLInputElement && !SKIP_TYPES.has(el.type)) || el instanceof HTMLTextAreaElement;
