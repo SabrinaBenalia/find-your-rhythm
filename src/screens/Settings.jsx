@@ -183,20 +183,23 @@ export default function Settings() {
                 </span>
               ))}
             </div>
-            <div className="custom-tag-row">
-              <input
-                type="text"
-                placeholder={`Add ${cat.label.toLowerCase()}…`}
-                value={newTagInput[cat.key]}
-                onChange={e => setNewTagInput(p => ({ ...p, [cat.key]: e.target.value }))}
-                onKeyDown={e => e.key === 'Enter' && addTag(cat.key)}
-                onTouchEnd={e => e.target.focus()}
-                autoComplete="off"
-                autoCorrect="off"
-                autoCapitalize="off"
-              />
-              <button onClick={() => addTag(cat.key)} type="button"><Plus size={16} /></button>
-            </div>
+            <button
+              className="settings-btn"
+              style={{ marginTop: 8 }}
+              type="button"
+              onClick={() => {
+                const val = window.prompt(`Add ${cat.label.toLowerCase()}:`);
+                if (!val?.trim()) return;
+                const tag = val.trim().toLowerCase();
+                const current = settings.tagLists?.[cat.key] || [];
+                if (current.includes(tag)) return;
+                const updated = { ...settings, tagLists: { ...settings.tagLists, [cat.key]: [...current, tag] } };
+                setSettings(updated);
+                saveSettings(updated);
+              }}
+            >
+              <Plus size={16} /> Add {cat.label.toLowerCase()}
+            </button>
           </div>
         ))}
         <button className="settings-btn primary" onClick={handleSave}>
