@@ -3,14 +3,16 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
-// iOS PWA: keyboard doesn't appear on input tap unless focus() is called
-// synchronously within a touch event handler
-document.addEventListener('touchend', (e) => {
+// iOS PWA: force keyboard on input tap
+document.addEventListener('touchstart', (e) => {
   const el = e.target;
-  if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+  if (
+    el.tagName === 'TEXTAREA' ||
+    (el.tagName === 'INPUT' && el.type !== 'range' && el.type !== 'checkbox' && el.type !== 'date' && el.type !== 'time')
+  ) {
     el.focus();
   }
-}, { passive: true });
+});
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
