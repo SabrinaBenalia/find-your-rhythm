@@ -36,6 +36,18 @@ body {
 
 #root { height: 100%; }
 
+/* ── Safari banner ── */
+.safari-banner {
+  background: rgba(155, 126, 200, 0.15);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  flex-shrink: 0;
+}
+.safari-banner a { color: var(--purple-light); font-weight: 600; }
+
 /* ── App shell ── */
 .app {
   display: flex;

@@ -1,5 +1,10 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+
+// Detect iOS PWA standalone mode
+const isIOSPWA = () =>
+  window.navigator.standalone === true &&
+  /iphone|ipad|ipod/i.test(navigator.userAgent);
 import BottomNav from './components/BottomNav';
 import Today from './screens/Today';
 import Calendar from './screens/Calendar';
@@ -23,6 +28,12 @@ function AppInner() {
 
   return (
     <div className="app">
+      {isIOSPWA() && (
+        <div className="safari-banner">
+          For text input, open in Safari →{' '}
+          <a href={window.location.href} target="_blank" rel="noreferrer">Open</a>
+        </div>
+      )}
       <div className="page-wrap" key={animKey}>
         <Routes>
           <Route path="/" element={<Today />} />
