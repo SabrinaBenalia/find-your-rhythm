@@ -45,7 +45,7 @@ body {
   max-width: 430px;
   margin: 0 auto;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .page-wrap {
