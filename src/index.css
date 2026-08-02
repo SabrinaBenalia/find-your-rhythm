@@ -51,6 +51,7 @@ body {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: var(--nav-h);
   animation: fadeUp 0.22s ease;
   -webkit-overflow-scrolling: touch;
@@ -80,6 +81,7 @@ body {
   align-items: center;
   justify-content: space-around;
   padding: 0 4px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   z-index: 100;
 }
 
