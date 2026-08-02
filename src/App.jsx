@@ -28,12 +28,6 @@ function AppInner() {
 
   return (
     <div className="app">
-      {isIOSPWA() && (
-        <div className="safari-banner">
-          For text input, open in Safari →{' '}
-          <a href={window.location.href} target="_blank" rel="noreferrer">Open</a>
-        </div>
-      )}
       <div className="page-wrap" key={animKey}>
         <Routes>
           <Route path="/" element={<Today />} />

@@ -22,53 +22,36 @@ input, textarea, select { touch-action: manipulation; -webkit-user-select: text;
   --nav-h:       64px;
 }
 
-html { height: -webkit-fill-available; }
+html, body { height: 100%; margin: 0; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
-  height: 100%;
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
   overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
 }
 
 #root { height: 100%; }
 
-/* ── Safari banner ── */
-.safari-banner {
-  background: rgba(155, 126, 200, 0.15);
-  border-bottom: 1px solid var(--border);
-  padding: 8px 16px;
-  font-size: 12px;
-  color: var(--text-muted);
-  text-align: center;
-  flex-shrink: 0;
-}
-.safari-banner a { color: var(--purple-light); font-weight: 600; }
-
 /* ── App shell ── */
 .app {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  height: -webkit-fill-available;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
   max-width: 430px;
   margin: 0 auto;
-  position: relative;
-  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .page-wrap {
-  flex: 1;
+  position: absolute;
+  top: env(safe-area-inset-top, 0px);
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
+  left: 0; right: 0;
   overflow-y: auto;
-  overflow-x: hidden;
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
-  animation: fadeUp 0.22s ease;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  animation: fadeUp 0.22s ease;
 }
 .page-wrap::-webkit-scrollbar { display: none; }
 
@@ -79,12 +62,9 @@ body {
 
 /* ── Bottom nav ── */
 .bottom-nav {
-  position: fixed;
+  position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 430px;
+  left: 0; right: 0;
   background: rgba(13, 8, 24, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
