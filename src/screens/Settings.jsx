@@ -1,10 +1,44 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { getSettings, saveSettings, importEntries, exportJSON, exportCSV } from '../utils/storage';
 import { SEED_ENTRIES } from '../utils/seed';
 import { generateInsights } from '../utils/cycle';
 import { getAllEntries } from '../utils/storage';
 import { backupToGoogleDrive, listBackups, restoreFromGoogleDrive, connectDrive, hasCredentials, isConnected } from '../utils/drive';
 import { Download, Upload, CloudUpload, RefreshCw, Lightbulb, X, Plus } from 'lucide-react';
+
+function TagPromptModal({ label, onConfirm, onCancel }) {
+  const inputRef = useRef(null);
+  const [value, setValue] = useState('');
+
+  useEffect(() => {
+    const t = setTimeout(() => inputRef.current?.focus(), 50);
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
+    <div className="tag-modal-overlay" onTouchEnd={e => e.target === e.currentTarget && onCancel()}>
+      <div className="tag-modal">
+        <p className="tag-modal-label">Add {label}</p>
+        <input
+          ref={inputRef}
+          type="text"
+          className="tag-modal-input"
+          placeholder={`Type ${label}…`}
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && value.trim() && onConfirm(value.trim())}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+        />
+        <div className="tag-modal-btns">
+          <button className="tag-modal-cancel" onClick={onCancel}>Cancel</button>
+          <button className="tag-modal-confirm" onClick={() => value.trim() && onConfirm(value.trim())}>Add</button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const TAG_CATEGORIES = [
   { key: 'symptoms',   label: 'Symptoms' },
@@ -18,6 +52,7 @@ export default function Settings() {
   const [driveStatus, setDriveStatus] = useState('');
   const [backups, setBackups] = useState([]);
   const [insights, setInsights] = useState(null);
+  const [tagPrompt, setTagPrompt] = useState(null); // { key, label }
 
   function handleSave() {
     saveSettings(settings);
@@ -125,8 +160,26 @@ export default function Settings() {
     setInsights(generateInsights(all));
   }
 
+  function handleTagConfirm(val) {
+    const tag = val.trim().toLowerCase();
+    const current = settings.tagLists?.[tagPrompt.key] || [];
+    if (!current.includes(tag)) {
+      const updated = { ...settings, tagLists: { ...settings.tagLists, [tagPrompt.key]: [...current, tag] } };
+      setSettings(updated);
+      saveSettings(updated);
+    }
+    setTagPrompt(null);
+  }
+
   return (
     <div className="screen settings-screen">
+      {tagPrompt && (
+        <TagPromptModal
+          label={tagPrompt.label}
+          onConfirm={handleTagConfirm}
+          onCancel={() => setTagPrompt(null)}
+        />
+      )}
       <header className="screen-header">
         <h2>Settings</h2>
       </header>
@@ -187,16 +240,7 @@ export default function Settings() {
               className="settings-btn"
               style={{ marginTop: 8 }}
               type="button"
-              onClick={() => {
-                const val = window.prompt(`Add ${cat.label.toLowerCase()}:`);
-                if (!val?.trim()) return;
-                const tag = val.trim().toLowerCase();
-                const current = settings.tagLists?.[cat.key] || [];
-                if (current.includes(tag)) return;
-                const updated = { ...settings, tagLists: { ...settings.tagLists, [cat.key]: [...current, tag] } };
-                setSettings(updated);
-                saveSettings(updated);
-              }}
+              onClick={() => setTagPrompt({ key: cat.key, label: cat.label.toLowerCase() })}
             >
               <Plus size={16} /> Add {cat.label.toLowerCase()}
             </button>

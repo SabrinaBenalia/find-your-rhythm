@@ -1048,6 +1048,70 @@ input[type=range]:active::-webkit-slider-thumb { box-shadow: 0 0 0 5px rgba(123,
   text-align: center;
 }
 
+/* ── Tag prompt modal ── */
+.tag-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.tag-modal {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  width: 100%;
+  max-width: 320px;
+}
+.tag-modal-label {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text);
+  text-transform: capitalize;
+}
+.tag-modal-input {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 16px;
+  padding: 12px;
+  margin-bottom: 16px;
+  outline: none;
+}
+.tag-modal-input:focus { border-color: var(--purple); }
+.tag-modal-btns {
+  display: flex;
+  gap: 10px;
+}
+.tag-modal-cancel {
+  flex: 1;
+  padding: 11px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 15px;
+  cursor: pointer;
+}
+.tag-modal-confirm {
+  flex: 1;
+  padding: 11px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--purple);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 /* ── Moon badge ── */
 .moon-badge { font-size: 16px; }
 .moon-badge.special { filter: drop-shadow(0 0 6px gold); }
