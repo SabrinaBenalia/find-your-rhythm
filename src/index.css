@@ -22,43 +22,42 @@ input, textarea, select { touch-action: manipulation; -webkit-user-select: text;
   --nav-h:       64px;
 }
 
-html, body, #root {
+html {
   height: 100%;
-  margin: 0;
 }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+  min-height: 100%;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+#root {
+  min-height: 100%;
 }
 
 /* ── App shell ── */
 .app {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
   max-width: 430px;
   margin: 0 auto;
+  min-height: 100dvh;
+  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
 }
 
 .page-wrap {
-  flex: 1;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
+  /* body scrolls — no overflow here */
 }
-.page-wrap::-webkit-scrollbar { display: none; }
 
 /* ── Bottom nav ── */
 .bottom-nav {
   position: fixed;
   bottom: 0;
-  left: 0; right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
   max-width: 430px;
-  margin: 0 auto;
   background: rgba(13, 8, 24, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
