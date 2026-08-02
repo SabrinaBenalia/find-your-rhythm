@@ -52,7 +52,7 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: var(--nav-h);
+  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
   animation: fadeUp 0.22s ease;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -82,6 +82,7 @@ body {
   justify-content: space-around;
   padding: 0 4px;
   padding-bottom: env(safe-area-inset-bottom, 0px);
+  height: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
   z-index: 100;
 }
 
@@ -553,7 +554,7 @@ input[type=range]:active::-webkit-slider-thumb { box-shadow: 0 0 0 5px rgba(123,
 /* ── Save bar ── */
 .save-bar {
   position: sticky;
-  bottom: calc(var(--nav-h) + 12px);
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 12px);
   padding: 0 16px;
   z-index: 10;
 }
