@@ -66,9 +66,7 @@ async function ensureGis() {
 
 export async function initGoogleAPIs() {
   const { clientId, apiKey } = creds();
-  console.log('[Drive] clientId:', clientId);
-  console.log('[Drive] apiKey:', apiKey?.slice(0, 8) + '…');
-  if (!clientId || !apiKey) throw new Error('Add your Google Client ID and API Key in Settings → Google Drive.');
+if (!clientId || !apiKey) throw new Error('Add your Google Client ID and API Key in Settings → Google Drive.');
   await Promise.all([ensureGapi(), ensureGis()]);
 }
 
