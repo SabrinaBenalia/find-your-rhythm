@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icons/*.png'],
       manifest: {
-        name: 'Find Your Rhythm',
-        short_name: 'Rhythm',
+        name: 'RhythmFlow',
+        short_name: 'RhythmFlow',
         description: 'Personal cycle tracking — body, lunar & seasonal patterns',
         theme_color: '#0d0818',
         background_color: '#0d0818',

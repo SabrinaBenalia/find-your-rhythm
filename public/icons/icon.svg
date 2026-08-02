@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <!-- Deep purple background gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#4a1f8c"/>
+      <stop offset="60%" stop-color="#2a0d5e"/>
+      <stop offset="100%" stop-color="#0d0520"/>
+    </radialGradient>
+
+    <!-- Golden sphere - main gradient (3D light from top-left) -->
+    <radialGradient id="sphereGrad" cx="38%" cy="32%" r="65%">
+      <stop offset="0%"   stop-color="#fff8d6"/>
+      <stop offset="15%"  stop-color="#ffe066"/>
+      <stop offset="40%"  stop-color="#f5a800"/>
+      <stop offset="70%"  stop-color="#c97000"/>
+      <stop offset="90%"  stop-color="#7a3d00"/>
+      <stop offset="100%" stop-color="#3d1800"/>
+    </radialGradient>
+
+    <!-- Outer glow for sphere -->
+    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#f5c400" stop-opacity="0.6"/>
+      <stop offset="50%"  stop-color="#f5a800" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#f5a800" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Sparkle glow around background -->
+    <radialGradient id="purpleGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#7b3fc4" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#0d0520"  stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="softBlur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+    <filter id="tinyBlur">
+      <feGaussianBlur stdDeviation="1.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="90" fill="url(#bgGrad)"/>
+
+  <!-- Subtle purple ambient glow in center -->
+  <ellipse cx="256" cy="256" rx="220" ry="220" fill="url(#purpleGlow)"/>
+
+  <!-- Stars / sparkles -->
+  <g fill="white" opacity="0.7">
+    <circle cx="80"  cy="90"  r="1.8"/>
+    <circle cx="140" cy="60"  r="1.2"/>
+    <circle cx="420" cy="80"  r="2"/>
+    <circle cx="460" cy="130" r="1.4"/>
+    <circle cx="55"  cy="200" r="1.6"/>
+    <circle cx="450" cy="320" r="1.8"/>
+    <circle cx="90"  cy="400" r="1.2"/>
+    <circle cx="400" cy="430" r="2"/>
+    <circle cx="200" cy="470" r="1.4"/>
+    <circle cx="330" cy="60"  r="1.6"/>
+    <circle cx="70"  cy="300" r="1"/>
+    <circle cx="470" cy="210" r="1.2"/>
+  </g>
+
+  <!-- 4-point sparkles -->
+  <g fill="white" opacity="0.5">
+    <path d="M420 80 L422 74 L424 80 L422 86 Z"/>
+    <path d="M80 380 L82 374 L84 380 L82 386 Z"/>
+    <path d="M130 450 L132 445 L134 450 L132 455 Z"/>
+  </g>
+
+  <!-- Sphere outer glow (large, blurred) -->
+  <circle cx="256" cy="256" r="145" fill="url(#glowGrad)" filter="url(#softBlur)"/>
+
+  <!-- Sphere inner glow ring -->
+  <circle cx="256" cy="256" r="112" fill="none" stroke="#f5c400" stroke-width="2" opacity="0.3" filter="url(#tinyBlur)"/>
+
+  <!-- Main golden sphere -->
+  <circle cx="256" cy="256" r="108" fill="url(#sphereGrad)"/>
+
+  <!-- Specular highlight (top-left shine) -->
+  <ellipse cx="218" cy="208" rx="38" ry="26" fill="white" opacity="0.28" transform="rotate(-30 218 208)"/>
+
+  <!-- Tiny bright specular dot -->
+  <ellipse cx="210" cy="200" rx="12" ry="8" fill="white" opacity="0.55" transform="rotate(-30 210 200)"/>
+
+  <!-- Bottom shadow rim to enhance 3D -->
+  <ellipse cx="270" cy="320" rx="70" ry="30" fill="#3d1800" opacity="0.35" filter="url(#tinyBlur)"/>
+</svg>

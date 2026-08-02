@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(git push *)",
+      "Bash(gh auth *)",
+      "Bash(qlmanage -t -s 512 -o /Users/sabrinabenalia/find-your-rhythm/public/icons/ /Users/sabrinabenalia/find-your-rhythm/public/icons/icon.svg)",
+      "Bash(sips -z 192 192 /Users/sabrinabenalia/find-your-rhythm/public/icons/icon-512.png --out /Users/sabrinabenalia/find-your-rhythm/public/icons/icon-192.png)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }
