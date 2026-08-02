@@ -190,6 +190,7 @@ export default function Settings() {
                 value={newTagInput[cat.key]}
                 onChange={e => setNewTagInput(p => ({ ...p, [cat.key]: e.target.value }))}
                 onKeyDown={e => e.key === 'Enter' && addTag(cat.key)}
+                onTouchEnd={e => e.target.focus()}
                 autoComplete="off"
                 autoCorrect="off"
                 autoCapitalize="off"
