@@ -1,0 +1,86 @@
+import { getMoonIllumination } from './cosmos';
+
+// Called when a new period starts — sends the completed cycle summary by email.
+// Replace sendEmail() with your email service (EmailJS, Resend, etc.) at deploy time.
+export async function sendCycleEndEmail(completedCycleStart, newCycleStart, allEntries, userEmail) {
+  const cycle = buildEmailSummary(completedCycleStart, newCycleStart, allEntries);
+  if (!cycle) return;
+
+  const subject = `Cycle ${cycle.cycleNum} complete — ${cycle.length} days`;
+  const body = formatEmailBody(cycle);
+
+  await sendEmail(userEmail, subject, body);
+}
+
+function buildEmailSummary(start, next, allEntries) {
+  const entries = Object.values(allEntries).filter(
+    e => e.date >= start && e.date < next
+  ).sort((a, b) => a.date.localeCompare(b.date));
+
+  if (!entries.length) return null;
+
+  const periodDays = entries.filter(e => e.period?.active);
+  const moodVals   = entries.map(e => e.body?.mood).filter(Boolean);
+  const energyVals = entries.map(e => e.body?.creativeEnergy).filter(Boolean);
+  const avg = arr => arr.length ? (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1) : '—';
+
+  const fastingDays = entries.filter(e => e.fasting?.active).length;
+
+  const symCount = {};
+  entries.forEach(e => (e.tags?.symptoms || []).forEach(s => {
+    symCount[s] = (symCount[s] || 0) + 1;
+  }));
+  const topSymptoms = Object.entries(symCount)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([s, c]) => `${s} (${c}d)`);
+
+  const cycleLength = Math.round(
+    (new Date(next + 'T12:00:00Z') - new Date(start + 'T12:00:00Z')) / (1000 * 60 * 60 * 24)
+  );
+
+  const periodStartEntry = periodDays[0];
+  const startMoonPhase = periodStartEntry?.cosmos?.moonPhase ?? null;
+  const startMoonIllumination = startMoonPhase != null ? getMoonIllumination(startMoonPhase) : null;
+  const startMoonName = periodStartEntry?.cosmos?.moonName ?? null;
+
+  return {
+    start,
+    next,
+    length: cycleLength,
+    periodLength: periodDays.length,
+    avgMood: avg(moodVals),
+    avgEnergy: avg(energyVals),
+    fastingDays,
+    topSymptoms,
+    loggedDays: entries.length,
+    startMoonIllumination,
+    startMoonName,
+  };
+}
+
+function formatEmailBody(cycle) {
+  const moonLine = cycle.startMoonIllumination != null
+    ? `— Moon at period start: ${cycle.startMoonName} (${cycle.startMoonIllumination}% illumination)`
+    : '';
+  return `
+Your cycle from ${cycle.start} to ${cycle.next} is complete.
+
+— ${cycle.length} day cycle
+— ${cycle.periodLength} day period
+— ${cycle.loggedDays} days logged
+— Avg mood: ${cycle.avgMood} / 10
+— Avg creative energy: ${cycle.avgEnergy} / 5
+— Fasting days: ${cycle.fastingDays}
+${moonLine}
+${cycle.topSymptoms.length ? `— Top symptoms: ${cycle.topSymptoms.join(', ')}` : ''}
+
+Open Find Your Rhythm to view your full cycle log.
+`.trim();
+}
+
+// ── Swap this out at deploy time ──────────────────────────────────────────────
+async function sendEmail(to, subject, body) {
+  // TODO: replace with EmailJS / Resend / your backend endpoint
+  console.log('[cycleEmail] Ready to send:', { to, subject, body });
+}
