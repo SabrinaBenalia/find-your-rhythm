@@ -185,10 +185,14 @@ export default function Settings() {
             </div>
             <div className="custom-tag-row">
               <input
+                type="text"
                 placeholder={`Add ${cat.label.toLowerCase()}…`}
                 value={newTagInput[cat.key]}
                 onChange={e => setNewTagInput(p => ({ ...p, [cat.key]: e.target.value }))}
                 onKeyDown={e => e.key === 'Enter' && addTag(cat.key)}
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
               />
               <button onClick={() => addTag(cat.key)} type="button"><Plus size={16} /></button>
             </div>
