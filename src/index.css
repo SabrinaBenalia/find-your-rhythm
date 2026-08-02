@@ -72,7 +72,6 @@ body {
   transform: translateX(-50%);
   width: 100%;
   max-width: 430px;
-  height: var(--nav-h);
   background: rgba(13, 8, 24, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -82,6 +81,8 @@ body {
   justify-content: space-around;
   padding: 0 4px;
   padding-bottom: env(safe-area-inset-bottom, 0px);
+  align-items: flex-start;
+  padding-top: 10px;
   height: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
   z-index: 100;
 }
@@ -553,10 +554,7 @@ input[type=range]:active::-webkit-slider-thumb { box-shadow: 0 0 0 5px rgba(123,
 
 /* ── Save bar ── */
 .save-bar {
-  position: sticky;
-  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 12px);
-  padding: 0 16px;
-  z-index: 10;
+  padding: 16px 16px 8px;
 }
 .save-btn {
   width: 100%;
