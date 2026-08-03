@@ -29,7 +29,7 @@ export default defineConfig({
         categories: ['health', 'lifestyle'],
       },
       workbox: {
-        cacheId: 'fyr-v2',
+        cacheId: 'fyr-v3',
         skipWaiting: true,
         clientsClaim: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
