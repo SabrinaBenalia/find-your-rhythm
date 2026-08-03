@@ -37,6 +37,7 @@ export default function Today() {
   const [dateStr, setDateStr] = useState(() => location.state?.date || today());
   const [entry, setEntry] = useState(null);
   const [saved, setSaved] = useState(false);
+  const [toast, setToast] = useState(false);
   const [customTagInput, setCustomTagInput] = useState({ symptoms: '', herbs: '', activities: '' });
   const [currentFast, setCurrentFast] = useState(() => getCurrentFast());
   const [fastStartInput, setFastStartInput] = useState(() => localDateTimeStr());
@@ -154,7 +155,9 @@ export default function Today() {
     }
     save(entry);
     setSaved(true);
+    setToast(true);
     setTimeout(() => setSaved(false), 2000);
+    setTimeout(() => setToast(false), 2000);
     autoBackup(exportJSON(), exportCSV());
   }
 
@@ -214,6 +217,7 @@ export default function Today() {
 
   return (
     <div className="screen today-screen">
+      {toast && <div className="save-toast">Entry saved ✓</div>}
       <header className="today-header">
         <div className="today-hero">
           <div className="moon-display">

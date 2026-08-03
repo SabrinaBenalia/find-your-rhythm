@@ -1101,6 +1101,30 @@ input[type=range]:active::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(123,
 .moon-badge { font-size: 16px; }
 .moon-badge.special { filter: drop-shadow(0 0 6px gold); }
 
+/* ── Save toast ── */
+.save-toast {
+  position: fixed;
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--green);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 99px;
+  white-space: nowrap;
+  z-index: 200;
+  pointer-events: none;
+  animation: toast-pop 2s ease forwards;
+}
+@keyframes toast-pop {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  15%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+  75%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(0); }
+}
+
 /* ── Utilities ── */
 input:focus, select:focus, textarea:focus { outline: none; }
 button { font-family: inherit; }
