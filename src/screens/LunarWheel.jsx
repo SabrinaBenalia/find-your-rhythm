@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { useEntries } from '../hooks/useEntries';
-import { getSettings } from '../utils/storage';
+import { getSettings, localDateStr } from '../utils/storage';
 import { getCosmosForDate, getMoonPhase, LUNAR_CYCLE } from '../utils/cosmos';
 import { detectCyclePhase, getCyclePhaseColor, findPeriodStarts, estimateCycleLength } from '../utils/cycle';
 
@@ -111,7 +111,7 @@ export default function LunarWheel() {
     });
 
     // Today marker
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = localDateStr();
     const todayPhase = getMoonPhase(todayStr);
     const todayAngle = (todayPhase / LUNAR_DAYS) * 360;
     const todayPos = polarToXY(cx, cy, innerR * 0.85, todayAngle);

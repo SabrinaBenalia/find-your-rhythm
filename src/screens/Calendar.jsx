@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEntries } from '../hooks/useEntries';
-import { getSettings } from '../utils/storage';
+import { getSettings, localDateStr } from '../utils/storage';
 import { getCosmosForDate, getMoonPhaseEvent, isEclipse, getSolarEvent } from '../utils/cosmos';
 import { detectCyclePhase, getCyclePhaseColor, findPeriodStarts, estimateCycleLength, getEstimatedOvulation, getSummitDates } from '../utils/cycle';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -59,7 +59,7 @@ export default function Calendar() {
     return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
   }
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr();
 
   const cells = [];
   // Empty cells before first day

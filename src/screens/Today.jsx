@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useEntries } from '../hooks/useEntries';
-import { getSettings, getCurrentFast, startCurrentFast, clearCurrentFast } from '../utils/storage';
+import { getSettings, getCurrentFast, startCurrentFast, clearCurrentFast, localDateStr, localDateTimeStr } from '../utils/storage';
 import { sendCycleEndEmail } from '../utils/cycleEmail';
 import { getCosmosForDate, getMoonEmoji, getMoonPhaseEvent, isEclipse, getSolarEvent, getMoonIllumination, getMoonPhase } from '../utils/cosmos';
 import { autoBackup } from '../utils/drive';
@@ -28,7 +28,7 @@ const LIBIDO_LABELS = ['none', 'low', 'mild', 'moderate', 'high'];
 const CREATIVITY_LABELS = ['blocked', 'scattered', 'flowing', 'inspired', 'electric'];
 
 function today() {
-  return new Date().toISOString().split('T')[0];
+  return localDateStr();
 }
 
 export default function Today() {
@@ -39,7 +39,7 @@ export default function Today() {
   const [saved, setSaved] = useState(false);
   const [customTagInput, setCustomTagInput] = useState({ symptoms: '', herbs: '', activities: '' });
   const [currentFast, setCurrentFast] = useState(() => getCurrentFast());
-  const [fastStartInput, setFastStartInput] = useState(() => new Date().toISOString().slice(0, 16));
+  const [fastStartInput, setFastStartInput] = useState(() => localDateTimeStr());
   const [now, setNow] = useState(() => new Date());
   const settings = getSettings();
 
