@@ -380,7 +380,7 @@ export default function Today() {
               />
             </div>
           </div>
-          <div className="select-row">
+          <div className="field-stack">
             <label>Cervical Mucus</label>
             <div className="mucus-selects">
               <div className="mucus-select-group">
@@ -397,13 +397,13 @@ export default function Today() {
               </div>
             </div>
           </div>
-          <div className="select-row">
+          <div className="field-stack">
             <label>Cervix Position</label>
             <select value={entry.body.cervixLevel} onChange={e => update('body.cervixLevel', e.target.value)}>
               {CERVIX_OPTIONS.map(o => <option key={o} value={o}>{o || '—'}</option>)}
             </select>
           </div>
-          <div className="select-row">
+          <div className="temp-field">
             <label>LH Reading</label>
             <div className="reading-inputs">
               <input
