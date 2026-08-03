@@ -388,6 +388,7 @@ export default function Settings() {
       <div className="settings-footer">
         <p>Find Your Rhythm · All data stored locally on this device</p>
         <p style={{ marginTop: 4, fontSize: 10, opacity: 0.5 }}>build {__BUILD_DATE__}</p>
+        <p>test</p>
       </div>
     </div>
   );
