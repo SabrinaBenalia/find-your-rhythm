@@ -157,6 +157,7 @@ export async function backupToGoogleDrive(jsonStr, csvStr) {
   const folderId = await getOrCreateFolder();
   await upsertFile('data.json', jsonStr, 'application/json', folderId);
   await upsertFile('data.csv', csvStr, 'text/csv', folderId);
+  await upsertFile('settings.json', JSON.stringify(getSettings()), 'application/json', folderId);
 }
 
 // Silent auto-backup — called after every entry save, fails quietly.
@@ -184,7 +185,19 @@ export async function autoBackup(jsonStr, csvStr) {
 
     await upsertFile('data.json', jsonStr, 'application/json', folderId);
     await upsertFile('data.csv', csvStr, 'text/csv', folderId);
+    await upsertFile('settings.json', JSON.stringify(getSettings()), 'application/json', folderId);
   } catch { /* silent */ }
+}
+
+export async function restoreSettingsFromDrive() {
+  const folderId = await getOrCreateFolder();
+  const resp = await window.gapi.client.drive.files.list({
+    q: `name='settings.json' and '${folderId}' in parents and trashed=false`,
+    fields: 'files(id)',
+  });
+  if (!resp.result.files?.length) return null;
+  const file = await window.gapi.client.drive.files.get({ fileId: resp.result.files[0].id, alt: 'media' });
+  return file.body;
 }
 
 export async function listBackups() {

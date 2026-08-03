@@ -3,7 +3,7 @@ import { getSettings, saveSettings, importEntries, exportJSON, exportCSV } from 
 import { SEED_ENTRIES } from '../utils/seed';
 import { generateInsights } from '../utils/cycle';
 import { getAllEntries } from '../utils/storage';
-import { backupToGoogleDrive, listBackups, restoreFromGoogleDrive, connectDrive, hasCredentials, isConnected } from '../utils/drive';
+import { backupToGoogleDrive, listBackups, restoreFromGoogleDrive, restoreSettingsFromDrive, connectDrive, hasCredentials, isConnected } from '../utils/drive';
 import { Download, Upload, CloudUpload, RefreshCw, Lightbulb, X, Plus, Check } from 'lucide-react';
 
 const TAG_CATEGORIES = [
@@ -99,7 +99,14 @@ export default function Settings() {
       setDriveStatus('Restoring…');
       const json = await restoreFromGoogleDrive(fileId);
       importEntries(JSON.parse(json));
-      setDriveStatus('✓ Data restored from Drive.');
+      // Also restore settings (custom tags, preferences, etc.)
+      const settingsJson = await restoreSettingsFromDrive();
+      if (settingsJson) {
+        const restored = JSON.parse(settingsJson);
+        saveSettings(restored);
+        setSettings(restored);
+      }
+      setDriveStatus('✓ Data & settings restored from Drive.');
       setBackups([]);
     } catch (err) {
       setDriveStatus(`⚠ ${err.message || err}`);
