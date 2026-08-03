@@ -159,11 +159,29 @@ export async function backupToGoogleDrive(jsonStr, csvStr) {
   await upsertFile('data.csv', csvStr, 'text/csv', folderId);
 }
 
-// Silent auto-backup — called after every entry save, fails quietly
+// Silent auto-backup — called after every entry save, fails quietly.
+// Never overwrites Drive with fewer entries than what's already there,
+// so a reinstall can't clobber a fuller backup.
 export async function autoBackup(jsonStr, csvStr) {
   if (!isConnected() || !hasCredentials()) return;
   try {
     const folderId = await getOrCreateFolder();
+
+    // Check how many entries the Drive backup has before overwriting
+    const existing = await window.gapi.client.drive.files.list({
+      q: `name='data.json' and '${folderId}' in parents and trashed=false`,
+      fields: 'files(id)',
+    });
+    if (existing.result.files?.length > 0) {
+      const fileId = existing.result.files[0].id;
+      const resp = await window.gapi.client.drive.files.get({ fileId, alt: 'media' });
+      try {
+        const driveEntries = Object.keys(JSON.parse(resp.body));
+        const localEntries = Object.keys(JSON.parse(jsonStr));
+        if (driveEntries.length > localEntries.length) return; // Drive has more data — don't overwrite
+      } catch { /* if we can't parse, proceed with overwrite */ }
+    }
+
     await upsertFile('data.json', jsonStr, 'application/json', folderId);
     await upsertFile('data.csv', csvStr, 'text/csv', folderId);
   } catch { /* silent */ }
