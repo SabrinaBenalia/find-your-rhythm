@@ -1,7 +1,7 @@
+import emailjs from '@emailjs/browser';
 import { getMoonIllumination } from './cosmos';
+import { getSettings } from './storage';
 
-// Called when a new period starts — sends the completed cycle summary by email.
-// Replace sendEmail() with your email service (EmailJS, Resend, etc.) at deploy time.
 export async function sendCycleEndEmail(completedCycleStart, newCycleStart, allEntries, userEmail) {
   const cycle = buildEmailSummary(completedCycleStart, newCycleStart, allEntries);
   if (!cycle) return;
@@ -79,8 +79,14 @@ Open Find Your Rhythm to view your full cycle log.
 `.trim();
 }
 
-// ── Swap this out at deploy time ──────────────────────────────────────────────
 async function sendEmail(to, subject, body) {
-  // TODO: replace with EmailJS / Resend / your backend endpoint
-  console.log('[cycleEmail] Ready to send:', { to, subject, body });
+  const { emailjsServiceId, emailjsTemplateId, emailjsPublicKey } = getSettings();
+  if (!emailjsServiceId || !emailjsTemplateId || !emailjsPublicKey || !to) return;
+
+  await emailjs.send(
+    emailjsServiceId,
+    emailjsTemplateId,
+    { to_email: to, subject, message: body },
+    { publicKey: emailjsPublicKey }
+  );
 }

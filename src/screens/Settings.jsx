@@ -236,17 +236,50 @@ export default function Settings() {
 
       {/* Notifications */}
       <section className="settings-section">
-        <h3>Notifications</h3>
-        <p className="help-text">Your cycle summary will be emailed here at the start of each new cycle.</p>
+        <h3>Cycle Summary Email</h3>
+        <p className="help-text">Sends a cycle summary to your email each time a new period starts. Powered by <strong>EmailJS</strong> (free at emailjs.com).</p>
         <div className="setting-row">
-          <label>Email</label>
+          <label>Send to email</label>
           <input
             type="email"
             placeholder="you@example.com"
             value={settings.email || ''}
             onChange={e => setSettings(s => ({ ...s, email: e.target.value }))}
             className="lat-input"
-            style={{ width: '100%', maxWidth: '240px' }}
+            style={{ width: '100%' }}
+          />
+        </div>
+        <div className="setting-row">
+          <label>EmailJS Service ID</label>
+          <input
+            type="text"
+            placeholder="service_xxxxxxx"
+            value={settings.emailjsServiceId || ''}
+            onChange={e => setSettings(s => ({ ...s, emailjsServiceId: e.target.value }))}
+            className="lat-input"
+            style={{ width: '100%' }}
+          />
+        </div>
+        <div className="setting-row">
+          <label>EmailJS Template ID</label>
+          <input
+            type="text"
+            placeholder="template_xxxxxxx"
+            value={settings.emailjsTemplateId || ''}
+            onChange={e => setSettings(s => ({ ...s, emailjsTemplateId: e.target.value }))}
+            className="lat-input"
+            style={{ width: '100%' }}
+          />
+        </div>
+        <div className="setting-row">
+          <label>EmailJS Public Key</label>
+          <input
+            type="text"
+            placeholder="xxxxxxxxxxxx"
+            value={settings.emailjsPublicKey || ''}
+            onChange={e => setSettings(s => ({ ...s, emailjsPublicKey: e.target.value }))}
+            className="lat-input"
+            style={{ width: '100%' }}
           />
         </div>
         <button className="settings-btn primary" onClick={handleSave}>
