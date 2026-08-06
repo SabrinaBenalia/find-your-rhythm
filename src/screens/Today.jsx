@@ -560,11 +560,8 @@ export default function Today() {
         </section>
       </div>
 
-      <div className="save-bar">
-        <button className={`save-btn ${saved ? 'saved' : ''}`} onClick={handleSave}>
-          {saved ? <><Check size={18} /> Saved</> : 'Save entry'}
-        </button>
-        {entries[dateStr] && (
+      {entries[dateStr] && (
+        <div style={{ padding: '0 16px 24px' }}>
           <button
             className="delete-entry-btn"
             onClick={() => {
@@ -576,7 +573,13 @@ export default function Today() {
           >
             Delete entry
           </button>
-        )}
+        </div>
+      )}
+
+      <div className="save-bar">
+        <button className={`save-btn ${saved ? 'saved' : ''}`} onClick={handleSave}>
+          {saved ? <><Check size={18} /> Saved</> : 'Save entry'}
+        </button>
       </div>
     </div>
   );
