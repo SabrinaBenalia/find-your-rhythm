@@ -363,8 +363,21 @@ export default function Today() {
                 <span className="fast-duration">{getFastDuration()}</span>
                 <span className="fast-duration-sub">currently fasting</span>
               </div>
-              <div className="fast-start-info">
-                Started {new Date(currentFast.startedAt).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })} at {currentFast.startedAt.slice(11, 16)}
+              <div className="select-row">
+                <label>Started at</label>
+                <input
+                  type="datetime-local"
+                  defaultValue={currentFast.startedAt}
+                  onBlur={e => {
+                    if (e.target.value) {
+                      startCurrentFast(e.target.value);
+                      setCurrentFast({ startedAt: e.target.value });
+                      update('fasting.startTime', e.target.value.slice(11, 16));
+                    }
+                  }}
+                  className="time-input-sm"
+                  style={{ width: 'auto' }}
+                />
               </div>
               <button type="button" className="fast-break-btn" onClick={handleBreakFast}>
                 Break fast
@@ -375,11 +388,23 @@ export default function Today() {
             </>
           ) : entry.fasting?.active ? (
             <>
-              <div className="fast-start-info" style={{ textAlign: 'left' }}>
-                {entry.fasting.startTime && `Started: ${fmt12(entry.fasting.startTime)}`}
-                {entry.fasting.startTime && entry.fasting.endTime && ' · '}
-                {entry.fasting.endTime && `Ended: ${fmt12(entry.fasting.endTime)}`}
-                {!entry.fasting.startTime && !entry.fasting.endTime && 'Fasting logged'}
+              <div className="time-field">
+                <label>Start time</label>
+                <input
+                  type="time"
+                  value={entry.fasting.startTime || ''}
+                  onChange={e => update('fasting.startTime', e.target.value || null)}
+                  className="time-input"
+                />
+              </div>
+              <div className="time-field">
+                <label>End time</label>
+                <input
+                  type="time"
+                  value={entry.fasting.endTime || ''}
+                  onChange={e => update('fasting.endTime', e.target.value || null)}
+                  className="time-input"
+                />
               </div>
               <button type="button" className="fast-break-btn" style={{ color: 'var(--rose)', borderColor: 'rgba(233,30,140,0.35)' }} onClick={handleClearFasting}>
                 Remove fasting
