@@ -295,9 +295,11 @@ export function extractFasts(cycleDays, allEntries) {
       durationHours = days.length * 24;
     }
 
+    const wholeDays = Math.floor(durationHours / 24);
+    const remainingHours = Math.round(durationHours % 24);
     const durationStr = durationHours >= 24
-      ? `${(durationHours / 24).toFixed(1)} days`
-      : `${durationHours}h`;
+      ? `${wholeDays}d ${remainingHours}h (${Math.round(durationHours)}h total)`
+      : `${Math.round(durationHours)}h`;
 
     const phase = detectCyclePhase(startDate, allEntries);
 
