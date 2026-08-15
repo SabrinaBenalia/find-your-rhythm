@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useEntries } from '../hooks/useEntries';
-import { getSettings, getCurrentFast, startCurrentFast, clearCurrentFast, localDateStr, localDateTimeStr } from '../utils/storage';
+import { getSettings, getCurrentFast, startCurrentFast, clearCurrentFast, localDateStr, localDateTimeStr, saveEntry } from '../utils/storage';
 import { sendCycleEndEmail } from '../utils/cycleEmail';
 import { getCosmosForDate, getMoonEmoji, getMoonPhaseEvent, isEclipse, getSolarEvent, getMoonIllumination, getMoonPhase } from '../utils/cosmos';
 import { autoBackup } from '../utils/drive';
@@ -95,6 +95,22 @@ export default function Today() {
 
   function handleBreakFast() {
     const endTime = new Date().toTimeString().slice(0, 5);
+    const startDateStr = localDateStr(new Date(currentFast.startedAt));
+    const endDateStr = today();
+
+    // Retroactively mark every day between fast start and end as fasting.
+    // Use saveEntry directly (not the hook's save) to avoid triggering a
+    // React re-render that would reset the current entry's unsaved state.
+    let d = new Date(startDateStr + 'T12:00:00Z');
+    d.setUTCDate(d.getUTCDate() + 1); // start day already marked when fast began
+    const endD = new Date(endDateStr + 'T12:00:00Z');
+    while (d < endD) {
+      const ds = d.toISOString().split('T')[0];
+      const existing = entries[ds] || getOrCreate(ds);
+      saveEntry({ ...existing, fasting: { ...existing.fasting, active: true } });
+      d.setUTCDate(d.getUTCDate() + 1);
+    }
+
     clearCurrentFast();
     setCurrentFast(null);
     update('fasting.active', true);
