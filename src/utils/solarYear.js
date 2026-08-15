@@ -1,5 +1,5 @@
 import { getMoonPhase, getMoonName, getMoonEmoji, getMoonIllumination } from './cosmos';
-import { findSummitDay } from './cycle';
+import { findSummitDay, extractFasts } from './cycle';
 
 // Solar year starts ~March 20 each year
 export function getSolarYearForDate(dateStr) {
@@ -164,6 +164,7 @@ function computeCycleSummary(cycleStart, nextCycleStart, allEntries, globalNum) 
     avgMood: avg(moodVals),
     avgEnergy: avg(energyVals),
     notableSymptoms,
+    fasts: extractFasts(cycleDays, allEntries),
     moonAtStart: moonName,
     moonEmojiAtStart: moonEmoji,
     moonPhaseAtStart: Math.round(moonPhase * 10) / 10,

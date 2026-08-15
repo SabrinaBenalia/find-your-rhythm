@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useEntries } from '../hooks/useEntries';
 import { buildCyclesBySolarYear, getSolarYearLabel } from '../utils/solarYear';
+import { getCyclePhaseName } from '../utils/cycle';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const FLOW_LABEL   = ['', 'light', 'medium', 'heavy', 'very heavy'];
@@ -120,6 +121,20 @@ function CycleDetail({ cycle }) {
           <div className="sym-pills">
             {cycle.notableSymptoms.map(s => (
               <span key={s} className="sym-pill">{s}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {cycle.fasts?.length > 0 && (
+        <div className="detail-block">
+          <span className="detail-block-title">Fasts</span>
+          <div className="detail-grid">
+            {cycle.fasts.map((f, i) => (
+              <div key={i} className="detail-item" style={{ gridColumn: 'span 2' }}>
+                <span className="detail-label">{fmt(f.startDate)}{f.startDate !== f.endDate ? ` → ${fmt(f.endDate)}` : ''}</span>
+                <span className="detail-value">{f.durationStr} · {getCyclePhaseName(f.phase)}</span>
+              </div>
             ))}
           </div>
         </div>

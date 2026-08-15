@@ -1,6 +1,7 @@
 import emailjs from '@emailjs/browser';
 import { getMoonIllumination } from './cosmos';
 import { getSettings } from './storage';
+import { extractFasts, getCyclePhaseName } from './cycle';
 
 export async function sendCycleEndEmail(completedCycleStart, newCycleStart, allEntries, userEmail) {
   const cycle = buildEmailSummary(completedCycleStart, newCycleStart, allEntries);
@@ -25,6 +26,7 @@ function buildEmailSummary(start, next, allEntries) {
   const avg = arr => arr.length ? (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1) : '—';
 
   const fastingDays = entries.filter(e => e.fasting?.active).length;
+  const fasts = extractFasts(entries, allEntries);
 
   const symCount = {};
   entries.forEach(e => (e.tags?.symptoms || []).forEach(s => {
@@ -52,6 +54,7 @@ function buildEmailSummary(start, next, allEntries) {
     avgMood: avg(moodVals),
     avgEnergy: avg(energyVals),
     fastingDays,
+    fasts,
     topSymptoms,
     loggedDays: entries.length,
     startMoonIllumination,
@@ -72,6 +75,7 @@ Your cycle from ${cycle.start} to ${cycle.next} is complete.
 — Avg mood: ${cycle.avgMood} / 10
 — Avg creative energy: ${cycle.avgEnergy} / 5
 — Fasting days: ${cycle.fastingDays}
+${cycle.fasts.length ? `\nFASTS\n${cycle.fasts.map((f, i) => `  ${i + 1}. ${f.startDate}${f.startDate !== f.endDate ? ` → ${f.endDate}` : ''} · ${f.durationStr} · ${getCyclePhaseName(f.phase)} phase`).join('\n')}` : ''}
 ${moonLine}
 ${cycle.topSymptoms.length ? `— Top symptoms: ${cycle.topSymptoms.join(', ')}` : ''}
 

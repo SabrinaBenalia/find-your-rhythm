@@ -253,6 +253,58 @@ export function getCyclePhaseName(phase) {
   }[phase] || 'Unknown';
 }
 
+// ── Fasts ─────────────────────────────────────────────────────────────────────
+
+// Groups consecutive fasting days into individual fasts with duration + phase.
+export function extractFasts(cycleDays, allEntries) {
+  const fastingDates = cycleDays
+    .filter(e => e.fasting?.active)
+    .map(e => e.date)
+    .sort();
+
+  if (!fastingDates.length) return [];
+
+  // Group into consecutive runs
+  const groups = [[fastingDates[0]]];
+  for (let i = 1; i < fastingDates.length; i++) {
+    const prev = new Date(fastingDates[i - 1] + 'T12:00:00Z');
+    const curr = new Date(fastingDates[i] + 'T12:00:00Z');
+    if ((curr - prev) / 86400000 <= 1) {
+      groups[groups.length - 1].push(fastingDates[i]);
+    } else {
+      groups.push([fastingDates[i]]);
+    }
+  }
+
+  return groups.map(days => {
+    const startDate = days[0];
+    const endDate = days[days.length - 1];
+    const startEntry = allEntries[startDate];
+    const endEntry = allEntries[endDate];
+    const startTime = startEntry?.fasting?.startTime;
+    const endTime = endEntry?.fasting?.endTime;
+
+    let durationHours = null;
+    if (startTime && endTime) {
+      const [sh, sm] = startTime.split(':').map(Number);
+      const [eh, em] = endTime.split(':').map(Number);
+      const startMs = new Date(startDate + 'T00:00:00Z').getTime() + (sh * 60 + sm) * 60000;
+      const endMs   = new Date(endDate   + 'T00:00:00Z').getTime() + (eh * 60 + em) * 60000;
+      durationHours = Math.round(((endMs - startMs) / 3600000) * 10) / 10;
+    } else {
+      durationHours = days.length * 24;
+    }
+
+    const durationStr = durationHours >= 24
+      ? `${(durationHours / 24).toFixed(1)} days`
+      : `${durationHours}h`;
+
+    const phase = detectCyclePhase(startDate, allEntries);
+
+    return { startDate, endDate, durationHours, durationStr, phase };
+  });
+}
+
 // ── Insights ──────────────────────────────────────────────────────────────────
 
 export function generateInsights(allEntries) {
