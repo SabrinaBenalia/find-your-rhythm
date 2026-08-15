@@ -31,6 +31,12 @@ function today() {
   return localDateStr();
 }
 
+function fmt12(timeStr) {
+  if (!timeStr) return '—';
+  const [h, m] = timeStr.split(':').map(Number);
+  return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h >= 12 ? 'pm' : 'am'}`;
+}
+
 export default function Today() {
   const location = useLocation();
   const { entries, save, remove, getOrCreate } = useEntries();
@@ -91,6 +97,17 @@ export default function Today() {
     setCurrentFast({ startedAt: fastStartInput });
     update('fasting.active', true);
     update('fasting.startTime', fastStartInput.slice(11, 16));
+  }
+
+  function handleCancelFast() {
+    clearCurrentFast();
+    setCurrentFast(null);
+  }
+
+  function handleClearFasting() {
+    update('fasting.active', false);
+    update('fasting.startTime', null);
+    update('fasting.endTime', null);
   }
 
   function handleBreakFast() {
@@ -351,6 +368,21 @@ export default function Today() {
               </div>
               <button type="button" className="fast-break-btn" onClick={handleBreakFast}>
                 Break fast
+              </button>
+              <button type="button" className="fast-break-btn" style={{ marginTop: 6, color: 'var(--rose)', borderColor: 'rgba(233,30,140,0.35)' }} onClick={handleCancelFast}>
+                Cancel fast (don't save)
+              </button>
+            </>
+          ) : entry.fasting?.active ? (
+            <>
+              <div className="fast-start-info" style={{ textAlign: 'left' }}>
+                {entry.fasting.startTime && `Started: ${fmt12(entry.fasting.startTime)}`}
+                {entry.fasting.startTime && entry.fasting.endTime && ' · '}
+                {entry.fasting.endTime && `Ended: ${fmt12(entry.fasting.endTime)}`}
+                {!entry.fasting.startTime && !entry.fasting.endTime && 'Fasting logged'}
+              </div>
+              <button type="button" className="fast-break-btn" style={{ color: 'var(--rose)', borderColor: 'rgba(233,30,140,0.35)' }} onClick={handleClearFasting}>
+                Remove fasting
               </button>
             </>
           ) : (
