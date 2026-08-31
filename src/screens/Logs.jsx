@@ -84,8 +84,12 @@ function CycleDetail({ cycle }) {
             <span className="detail-value">{cycle.cycleLength ? `${cycle.cycleLength} days` : cycle.ongoing ? 'ongoing' : '—'}</span>
           </div>
           <div className="detail-item">
-            <span className="detail-label">{cycle.summitDay ? '🏔️ Summit day' : 'Est. ovulation'}</span>
-            <span className="detail-value">{fmt(cycle.summitDay || cycle.ovulationDay)}</span>
+            <span className="detail-label">{cycle.summitDay ? '🏔️ Summit day' : '◎ Predicted summit'}</span>
+            <span className="detail-value">
+              {cycle.summitDay
+                ? `${fmt(cycle.summitDay)} (day ${cycle.summitDayNum})`
+                : `${fmt(cycle.predictedSummitDay)} (day 11, default)`}
+            </span>
           </div>
           <div className="detail-item">
             <span className="detail-label">Days logged</span>

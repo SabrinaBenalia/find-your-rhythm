@@ -1,6 +1,13 @@
-// Cycle phase detection — sympto-thermal method
-// Returns: 'menstrual' | 'follicular' | 'ovulation' | 'luteal' | null
+// Default phase boundaries (day numbers within cycle)
+export const DEFAULT_PHASES = {
+  menstrualEnd:   4,   // days 1–4
+  follicularEnd:  10,  // days 5–10
+  ovulationStart: 11,  // days 11–14
+  ovulationEnd:   14,
+  // luteal: day 15 → end of cycle
+};
 
+// Returns: 'menstrual' | 'follicular' | 'ovulation' | 'luteal' | null
 export function detectCyclePhase(dateStr, allEntries) {
   const sorted = Object.values(allEntries)
     .filter(e => e.period?.active)
@@ -15,44 +22,42 @@ export function detectCyclePhase(dateStr, allEntries) {
 
   const cycleIdx = periodStarts.indexOf(relevantStart);
   const nextStart = periodStarts[cycleIdx + 1] || null;
-
-  // Menstrual = actual logged period days, or predicted days within avg period length
-  if (allEntries[dateStr]?.period?.active) return 'menstrual';
-  const avgPeriodLength = estimatePeriodLength(periodStarts, allEntries);
-  const dayInCycleEarly = Math.round(
-    (new Date(dateStr + 'T12:00:00Z') - new Date(relevantStart + 'T12:00:00Z')) / 86400000
-  ) + 1;
-  if (!nextStart && !allEntries[dateStr] && dayInCycleEarly <= avgPeriodLength) return 'menstrual';
-
-  // Cut off predictions beyond the estimated cycle length
   const cycleLength = estimateCycleLength(periodStarts);
+
   const dayInCycle = Math.round(
     (new Date(dateStr + 'T12:00:00Z') - new Date(relevantStart + 'T12:00:00Z')) / 86400000
   ) + 1;
-  if (dayInCycle > cycleLength && !allEntries[dateStr]) return null;
 
-  // Get all entries for this cycle
+  // Color up to the actual next period start, or up to predicted cycle end
+  if (nextStart ? dateStr >= nextStart : dayInCycle > cycleLength) return null;
+
+  // Actual logged period days are always menstrual
+  if (allEntries[dateStr]?.period?.active) return 'menstrual';
+
+  // Check for a detected summit day (LH / BBT / cervix) and shift windows around it
   const cycleEntries = Object.values(allEntries)
     .filter(e => e.date >= relevantStart && (!nextStart || e.date < nextStart))
     .sort((a, b) => a.date.localeCompare(b.date));
 
-  // Try to find actual summit day from data
-  let summitDate = findSummitDay(cycleEntries);
-
-  // If no summit found yet, predict it
-  if (!summitDate) {
-    const avgDay = getAverageSummitDayInCycle(periodStarts, allEntries);
-    const d = new Date(relevantStart + 'T12:00:00Z');
-    d.setUTCDate(d.getUTCDate() + avgDay - 1);
-    summitDate = d.toISOString().split('T')[0];
+  const summitDate = findSummitDay(cycleEntries);
+  if (summitDate) {
+    const summitDay = Math.round(
+      (new Date(summitDate + 'T12:00:00Z') - new Date(relevantStart + 'T12:00:00Z')) / 86400000
+    ) + 1;
+    // Keep the same 4-day ovulation window width, centered on summit
+    const ovStart = summitDay - 1;
+    const ovEnd   = summitDay + 2;
+    if (dayInCycle <= DEFAULT_PHASES.menstrualEnd) return 'menstrual';
+    if (dayInCycle >= ovStart && dayInCycle <= ovEnd) return 'ovulation';
+    if (dayInCycle < ovStart) return 'follicular';
+    return 'luteal';
   }
 
-  const dateMs   = new Date(dateStr   + 'T12:00:00Z').getTime();
-  const summitMs = new Date(summitDate + 'T12:00:00Z').getTime();
-  const daysFromSummit = Math.round((dateMs - summitMs) / 86400000);
-
-  if (daysFromSummit >= -2 && daysFromSummit <= 2) return 'ovulation';
-  if (daysFromSummit < -2) return 'follicular';
+  // No summit data — use fixed defaults
+  if (dayInCycle <= DEFAULT_PHASES.menstrualEnd)   return 'menstrual';
+  if (dayInCycle >= DEFAULT_PHASES.ovulationStart &&
+      dayInCycle <= DEFAULT_PHASES.ovulationEnd)   return 'ovulation';
+  if (dayInCycle <  DEFAULT_PHASES.ovulationStart) return 'follicular';
   return 'luteal';
 }
 
@@ -71,13 +76,13 @@ export function findSummitDay(cycleEntries) {
   return candidates[0];
 }
 
-function findLHPeakDate(entries) {
+export function findLHPeakDate(entries) {
   const lhEntries = entries.filter(e => e.body?.lhPeak > 0);
   if (!lhEntries.length) return null;
   return lhEntries.reduce((a, b) => (a.body.lhPeak >= b.body.lhPeak ? a : b)).date;
 }
 
-function findBBTShiftDate(entries) {
+export function findBBTShiftDate(entries) {
   const bbt = entries.filter(e => e.body?.temp);
   if (bbt.length < 9) return null;
 
@@ -98,7 +103,7 @@ function findBBTShiftDate(entries) {
   return null;
 }
 
-function findLastCervixOpenDate(entries) {
+export function findLastCervixOpenDate(entries) {
   const open = entries.filter(e => e.body?.cervixLevel === 'high / open / soft');
   if (!open.length) return null;
   return open[open.length - 1].date;
@@ -211,9 +216,15 @@ export function estimateCycleLength(periodStarts) {
 export function getEstimatedOvulation(periodStarts, allEntries) {
   if (!periodStarts.length) return null;
   const lastStart = periodStarts[periodStarts.length - 1];
-  const avgSummitDay = getAverageSummitDayInCycle(periodStarts, allEntries || {});
+  // Use actual summit from current cycle if available
+  const currentCycleEntries = Object.values(allEntries || {})
+    .filter(e => e.date >= lastStart)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const summitDate = findSummitDay(currentCycleEntries);
+  if (summitDate) return summitDate;
+  // Fall back to default ovulation window start (day 11)
   const d = new Date(lastStart + 'T12:00:00Z');
-  d.setUTCDate(d.getUTCDate() + avgSummitDay - 1);
+  d.setUTCDate(d.getUTCDate() + DEFAULT_PHASES.ovulationStart - 1);
   return d.toISOString().split('T')[0];
 }
 

@@ -130,8 +130,18 @@ function computeCycleSummary(cycleStart, nextCycleStart, allEntries, globalNum) 
     .sort((a, b) => b[1] - a[1])
     .map(([tag]) => tag);
 
-  // Actual summit day from data
+  // Actual summit day from data, or predicted from defaults
   const summitDay = findSummitDay(cycleDays);
+  const summitDayNum = summitDay
+    ? Math.round((new Date(summitDay + 'T12:00:00Z') - new Date(cycleStart + 'T12:00:00Z')) / 86400000) + 1
+    : null;
+  const predictedSummitDay = !summitDay
+    ? (() => {
+        const d = new Date(cycleStart + 'T12:00:00Z');
+        d.setUTCDate(d.getUTCDate() + 10); // day 11
+        return d.toISOString().split('T')[0];
+      })()
+    : null;
 
   // Ovulation estimate (fallback when no summit detected)
   const ovulationDay = cycleLength
@@ -160,6 +170,8 @@ function computeCycleSummary(cycleStart, nextCycleStart, allEntries, globalNum) 
     periodDurationHours,
     periodStartWeekday,
     summitDay,
+    summitDayNum,
+    predictedSummitDay,
     ovulationDay,
     avgFlow: avg(flowVals),
     avgMood: avg(moodVals),
