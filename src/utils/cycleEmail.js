@@ -3,11 +3,12 @@ import { getMoonIllumination } from './cosmos';
 import { getSettings } from './storage';
 import { extractFasts, getCyclePhaseName } from './cycle';
 
-export async function sendCycleEndEmail(completedCycleStart, newCycleStart, allEntries, userEmail) {
+export async function sendCycleEndEmail(completedCycleStart, newCycleStart, allEntries, userEmail, cycleNum) {
   const cycle = buildEmailSummary(completedCycleStart, newCycleStart, allEntries);
   if (!cycle) return;
 
-  const subject = `Cycle ${cycle.cycleNum} complete — ${cycle.length} days`;
+  const numLabel = cycleNum ? `Cycle ${cycleNum}` : 'Cycle';
+  const subject = `${numLabel} complete — ${cycle.length} days`;
   const body = formatEmailBody(cycle);
 
   await sendEmail(userEmail, subject, body);

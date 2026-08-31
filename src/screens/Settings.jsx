@@ -3,6 +3,7 @@ import { getSettings, saveSettings, importEntries, exportJSON, exportCSV } from 
 import { SEED_ENTRIES } from '../utils/seed';
 import { generateInsights } from '../utils/cycle';
 import { getAllEntries } from '../utils/storage';
+import { sendCycleEndEmail } from '../utils/cycleEmail';
 import { backupToGoogleDrive, listBackups, restoreFromGoogleDrive, restoreSettingsFromDrive, connectDrive, hasCredentials, isConnected } from '../utils/drive';
 import { Download, Upload, CloudUpload, RefreshCw, Lightbulb, X, Plus, Check } from 'lucide-react';
 
@@ -21,6 +22,7 @@ export default function Settings() {
   const [activeTagKey, setActiveTagKey] = useState(null);
   const [tagInputValue, setTagInputValue] = useState('');
   const tagInputRefs = useRef({});
+  const [emailStatus, setEmailStatus] = useState('');
 
   function handleSave() {
     saveSettings(settings);
@@ -285,6 +287,34 @@ export default function Settings() {
         <button className="settings-btn primary" onClick={handleSave}>
           {saved ? '✓ Saved' : 'Save'}
         </button>
+        <button className="settings-btn" style={{ marginTop: 8 }} onClick={async () => {
+          const allEntries = getAllEntries();
+          const allPeriodDates = Object.values(allEntries)
+            .filter(e => e.period?.active)
+            .map(e => e.date)
+            .sort();
+          if (allPeriodDates.length === 0) { setEmailStatus('⚠ No period data found.'); setTimeout(() => setEmailStatus(''), 3000); return; }
+          const cycleStarts = [allPeriodDates[0]];
+          for (let i = 1; i < allPeriodDates.length; i++) {
+            const gap = (new Date(allPeriodDates[i] + 'T12:00:00Z') - new Date(allPeriodDates[i-1] + 'T12:00:00Z')) / 86400000;
+            if (gap > 2) cycleStarts.push(allPeriodDates[i]);
+          }
+          if (cycleStarts.length < 2) { setEmailStatus('⚠ Need at least 2 cycles to send a recap.'); setTimeout(() => setEmailStatus(''), 4000); return; }
+          const start = cycleStarts[cycleStarts.length - 2];
+          const next = cycleStarts[cycleStarts.length - 1];
+          const cycleNum = cycleStarts.length - 1;
+          setEmailStatus('Sending…');
+          try {
+            await sendCycleEndEmail(start, next, allEntries, settings.email || '', cycleNum);
+            setEmailStatus('✓ Recap sent!');
+          } catch {
+            setEmailStatus('⚠ Send failed — check EmailJS credentials.');
+          }
+          setTimeout(() => setEmailStatus(''), 4000);
+        }}>
+          Resend last cycle recap
+        </button>
+        {emailStatus && <p className="help-text" style={{ marginTop: 6 }}>{emailStatus}</p>}
       </section>
 
       {/* AI Insights */}

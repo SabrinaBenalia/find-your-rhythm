@@ -1185,6 +1185,7 @@ input[type=range]:active::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(123,
   pointer-events: none;
   animation: toast-pop 2s ease forwards;
 }
+.save-toast--error { background: var(--rose); animation: toast-pop 4s ease forwards; }
 @keyframes toast-pop {
   0%   { opacity: 0; transform: translateX(-50%) translateY(8px); }
   15%  { opacity: 1; transform: translateX(-50%) translateY(0); }

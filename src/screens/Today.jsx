@@ -162,7 +162,7 @@ export default function Today() {
     setCustomTagInput(p => ({ ...p, [category]: '' }));
   }
 
-  function handleSave() {
+  async function handleSave() {
     // If this is the first day of a new period, the previous cycle just ended — send email
     const isNewCycleStart = entry.period.active && !entries[prevDay]?.period?.active;
     if (isNewCycleStart) {
@@ -171,7 +171,6 @@ export default function Today() {
         .map(e => e.date)
         .sort();
       if (allPeriodDates.length > 0) {
-        // Find the start of the previous cycle
         const prevCycleStarts = [];
         const sorted = [...allPeriodDates];
         if (sorted.length) prevCycleStarts.push(sorted[0]);
@@ -180,9 +179,15 @@ export default function Today() {
           if (gap > 2) prevCycleStarts.push(sorted[i]);
         }
         const prevCycleStart = prevCycleStarts[prevCycleStarts.length - 1];
+        const cycleNum = prevCycleStarts.length;
         if (prevCycleStart) {
           const userEmail = getSettings().email || '';
-          sendCycleEndEmail(prevCycleStart, dateStr, entries, userEmail);
+          try {
+            await sendCycleEndEmail(prevCycleStart, dateStr, entries, userEmail, cycleNum);
+          } catch (err) {
+            setToast('email-error');
+            setTimeout(() => setToast(false), 4000);
+          }
         }
       }
     }
@@ -250,7 +255,8 @@ export default function Today() {
 
   return (
     <div className="screen today-screen">
-      {toast && <div className="save-toast">Entry saved ✓</div>}
+      {toast === true && <div className="save-toast">Entry saved ✓</div>}
+      {toast === 'email-error' && <div className="save-toast save-toast--error">Email failed — check EmailJS settings</div>}
       <header className="today-header">
         <div className="today-hero">
           <div className="moon-display">
