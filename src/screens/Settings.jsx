@@ -307,10 +307,11 @@ export default function Settings() {
           try {
             await sendCycleEndEmail(start, next, allEntries, settings.email || '', cycleNum);
             setEmailStatus('✓ Recap sent!');
-          } catch {
-            setEmailStatus('⚠ Send failed — check EmailJS credentials.');
+            setTimeout(() => setEmailStatus(''), 4000);
+          } catch (err) {
+            const detail = err?.text || err?.message || JSON.stringify(err) || 'unknown error';
+            setEmailStatus(`⚠ ${detail}`);
           }
-          setTimeout(() => setEmailStatus(''), 4000);
         }}>
           Resend last cycle recap
         </button>
