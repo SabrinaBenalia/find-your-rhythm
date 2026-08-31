@@ -113,8 +113,9 @@ function computeCycleSummary(cycleStart, nextCycleStart, allEntries, globalNum) 
   }
 
   const flowVals = cycleDays.filter(e => e.period?.active && e.period?.flow > 0).map(e => e.period.flow);
-  const moodVals = cycleDays.map(e => e.body?.mood).filter(v => v > 0);
-  const energyVals = cycleDays.map(e => e.body?.creativeEnergy).filter(v => v > 0);
+  const moodVals = cycleDays.map(e => e.body?.mood).filter(v => v != null);
+  const energyVals = cycleDays.map(e => e.body?.creativeEnergy).filter(v => v != null);
+  const sexCount = cycleDays.reduce((sum, e) => sum + (e.sex ?? 0), 0);
 
   const avg = arr => arr.length ? (arr.reduce((a, b) => a + b, 0) / arr.length) : null;
 
@@ -163,6 +164,7 @@ function computeCycleSummary(cycleStart, nextCycleStart, allEntries, globalNum) 
     avgFlow: avg(flowVals),
     avgMood: avg(moodVals),
     avgEnergy: avg(energyVals),
+    sexCount,
     notableSymptoms,
     fasts: extractFasts(cycleDays, allEntries),
     moonAtStart: moonName,

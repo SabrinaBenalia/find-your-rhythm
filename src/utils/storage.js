@@ -181,6 +181,7 @@ export function createEmptyEntry(date, cosmos) {
       creativeEnergy: null,
       sleep: null,
     },
+    sex: null,
     poops: [],
     fasting: { active: false, startTime: null, endTime: null },
     tags: { symptoms: [], herbs: [], activities: [] },

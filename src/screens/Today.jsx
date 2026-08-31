@@ -512,6 +512,22 @@ export default function Today() {
         </section>
 
         <section className="form-section">
+          <h2 className="section-title">Sex</h2>
+          <div className="sex-counter-row">
+            {entry.sex === null ? (
+              <button className="sex-counter-btn" type="button" onClick={() => update('sex', 1)}>+ Log</button>
+            ) : (
+              <>
+                <button className="sex-counter-adj" type="button" onClick={() => update('sex', Math.max(0, entry.sex - 1))}>−</button>
+                <span className="sex-counter-val">{entry.sex}</span>
+                <button className="sex-counter-adj" type="button" onClick={() => update('sex', entry.sex + 1)}>+</button>
+                <button className="sex-counter-clear" type="button" onClick={() => update('sex', null)}>×</button>
+              </>
+            )}
+          </div>
+        </section>
+
+        <section className="form-section">
           <h2 className="section-title">Poop {(entry.poops?.length > 0) && <span className="poop-count">× {entry.poops.length}</span>}</h2>
           {(entry.poops || []).map((p, i) => (
             <div key={i} className="poop-entry">

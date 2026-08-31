@@ -19,6 +19,7 @@ const FIELDS = [
   { key: 'body.temp',                label: 'BBT (°C)'               },
   { key: 'period.flow',              label: 'Flow'                   },
   { key: 'period.cramps',            label: 'Cramps'                 },
+  { key: 'sex',                      label: 'Sex'                    },
   { key: 'fasting.active',           label: 'Fasting'                },
   { key: 'poops.length',             label: 'Poop count'             },
   { key: 'cosmos.moonIllumination',  label: 'Moon Illumination (%)'  },

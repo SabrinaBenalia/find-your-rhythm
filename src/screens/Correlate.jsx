@@ -24,6 +24,7 @@ const METRICS = [
   { key: 'body.temp',                 label: 'BBT (°C)',                max: null },
   { key: 'period.flow',               label: 'Flow',                   max: 4    },
   { key: 'period.cramps',             label: 'Cramps',                 max: 4    },
+  { key: 'sex',                        label: 'Sex',                    max: null },
   { key: 'fasting.active',            label: 'Fasting',                max: 1    },
   { key: 'poops.length',              label: 'Poop count',             max: null },
   { key: 'poops.size',                label: 'Poop size',              max: 5    },

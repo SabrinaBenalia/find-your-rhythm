@@ -91,6 +91,12 @@ function CycleDetail({ cycle }) {
             <span className="detail-label">Days logged</span>
             <span className="detail-value">{cycle.loggedDays}</span>
           </div>
+          {cycle.sexCount > 0 && (
+            <div className="detail-item">
+              <span className="detail-label">Sex</span>
+              <span className="detail-value">{cycle.sexCount}×</span>
+            </div>
+          )}
         </div>
       </div>
 

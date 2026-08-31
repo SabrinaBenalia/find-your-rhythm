@@ -37,6 +37,7 @@ function buildEmailSummary(start, next, allEntries) {
 
   const fastingDays = entries.filter(e => e.fasting?.active).length;
   const fasts = extractFasts(entries, allEntries);
+  const sexCount = entries.reduce((sum, e) => sum + (e.sex ?? 0), 0);
 
   const symCount = {};
   entries.forEach(e => (e.tags?.symptoms || []).forEach(s => {
@@ -99,6 +100,7 @@ function buildEmailSummary(start, next, allEntries) {
     loggedDays: entries.length,
     startMoonIllumination,
     startMoonName,
+    sexCount,
   };
 }
 
@@ -113,9 +115,10 @@ function formatEmailBody(cycle) {
     `— ${cycle.length} day cycle`,
     `— ${cycle.periodLength} day period, started ${periodStartLine}`,
     `— ${cycle.loggedDays} days logged`,
-    cycle.avgMood    != null ? `— Avg mood: ${cycle.avgMood} / 10`           : null,
+    cycle.avgMood    != null ? `— Avg mood: ${cycle.avgMood} / 10`              : null,
     cycle.avgEnergy  != null ? `— Avg creative energy: ${cycle.avgEnergy} / 5` : null,
-    cycle.avgCrampsLabel     ? `— Avg cramps: ${cycle.avgCrampsLabel}`        : null,
+    cycle.avgCrampsLabel     ? `— Avg cramps: ${cycle.avgCrampsLabel}`          : null,
+    cycle.sexCount > 0       ? `— Sex: ${cycle.sexCount}×`                     : null,
   ].filter(l => l !== null);
 
   if (cycle.startMoonIllumination != null) {
