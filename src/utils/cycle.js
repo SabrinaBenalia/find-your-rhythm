@@ -34,6 +34,9 @@ export function detectCyclePhase(dateStr, allEntries) {
   // Actual logged period days are always menstrual
   if (allEntries[dateStr]?.period?.active) return 'menstrual';
 
+  // Use actual logged period length if available, otherwise default to 4
+  const menstrualEnd = getActualPeriodLength(relevantStart, allEntries) || DEFAULT_PHASES.menstrualEnd;
+
   // Check for a detected summit day (LH / BBT / cervix) and shift windows around it
   const cycleEntries = Object.values(allEntries)
     .filter(e => e.date >= relevantStart && (!nextStart || e.date < nextStart))
@@ -44,21 +47,35 @@ export function detectCyclePhase(dateStr, allEntries) {
     const summitDay = Math.round(
       (new Date(summitDate + 'T12:00:00Z') - new Date(relevantStart + 'T12:00:00Z')) / 86400000
     ) + 1;
-    // Keep the same 4-day ovulation window width, centered on summit
     const ovStart = summitDay - 1;
     const ovEnd   = summitDay + 2;
-    if (dayInCycle <= DEFAULT_PHASES.menstrualEnd) return 'menstrual';
+    if (dayInCycle <= menstrualEnd) return 'menstrual';
     if (dayInCycle >= ovStart && dayInCycle <= ovEnd) return 'ovulation';
     if (dayInCycle < ovStart) return 'follicular';
     return 'luteal';
   }
 
-  // No summit data — use fixed defaults
-  if (dayInCycle <= DEFAULT_PHASES.menstrualEnd)   return 'menstrual';
+  // No summit data — use fixed defaults with actual period length
+  if (dayInCycle <= menstrualEnd)                  return 'menstrual';
   if (dayInCycle >= DEFAULT_PHASES.ovulationStart &&
       dayInCycle <= DEFAULT_PHASES.ovulationEnd)   return 'ovulation';
   if (dayInCycle <  DEFAULT_PHASES.ovulationStart) return 'follicular';
   return 'luteal';
+}
+
+// Count consecutive period-active days from cycle start (stops at first non-period day)
+function getActualPeriodLength(cycleStart, allEntries) {
+  let count = 0;
+  const d = new Date(cycleStart + 'T12:00:00Z');
+  for (let i = 0; i < 20; i++) {
+    if (allEntries[d.toISOString().split('T')[0]]?.period?.active) {
+      count++;
+      d.setUTCDate(d.getUTCDate() + 1);
+    } else {
+      break;
+    }
+  }
+  return count;
 }
 
 // ── Summit day detection ──────────────────────────────────────────────────────
